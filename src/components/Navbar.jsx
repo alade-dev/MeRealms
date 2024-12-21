@@ -1,52 +1,83 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { WalletTgSdk } from "@uxuycom/web3-tg-sdk";
 import { motion } from "framer-motion";
+import { LogOut } from "lucide-react";
 
-// import { LogOut } from "lucide-react";
-import { logoapp } from "../assets/icons";
+let isInjected = localStorage.getItem("__isInjected");
+const walletTgSdk = new WalletTgSdk({ injected: !!isInjected });
+const ethereum = isInjected ? window.ethereum : walletTgSdk.ethereum;
+
+const CHIANS = [
+  {
+    chainId: 56,
+    chainKey: "binance",
+    chainName: "Binance",
+    chainSymbol: "BNB",
+    chainRPCs: ["https://bnb.rpc.subquery.network/public"],
+  },
+  {
+    chainId: 204,
+    chainKey: "opbnb",
+    chainName: "opBNB",
+    chainSymbol: "BNB",
+    chainRPCs: ["https://opbnb-mainnet-rpc.bnbchain.org"],
+  },
+];
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // const [loading, setLoading] = useState(true); // Add loading state
-
-  // const { balance } = useBalance({
-  //   address: wallet?.address.toAddress(),
-  //   assetId: wallet?.provider.getBaseAssetId(),
-  // });
-
-  // useEffect(() => {
-  //   if (isConnected && wallet) {
-  //     setLoading(false);
-  //     //You can add function here 🫠
-  //   }
-  // }, [wallet, isConnected]);
+  const [walletAddress, setWalletAddress] = useState(null);
+  const [chainId, setChainId] = useState(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // const handleConnect = () => {
-  //   if (!isConnected) {
-  //     connect();
-  //   }
-  // };
+  const connectWallet = async () => {
+    try {
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setWalletAddress(accounts[0]);
+      const currentChainId = await ethereum.request({ method: "eth_chainId" });
+      setChainId(currentChainId);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
-  // const handleDisconnect = () => {
-  //   if (wallet) {
-  //     disconnect();
-  //   }
-  // };
+  const disconnectWallet = () => {
+    setWalletAddress(null);
+    setChainId(null);
+  };
 
-  // const slicedAddress = wallet?.address
-  //   ? `${wallet?.address.toAddress().slice(0, 8)}...${wallet?.address.toAddress().slice(-5)}`
-  //   : "";
+  const switchChain = async (chain) => {
+    try {
+      await ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: `0x${chain.chainId.toString(16)}` }],
+      });
+      setChainId(chain.chainId); 
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
-  // const handleCopyAddress = () => {
-  //   if (wallet?.address.toAddress()) {
-  //     navigator.clipboard.writeText(wallet.address.toAddress());
-  //     alert("Wallet address copied to clipboard!");
-  //   }
-  // };
+  useEffect(() => {
+    const init = async () => {
+      if (ethereum) {
+        const accounts = await ethereum.request({ method: "eth_accounts" });
+        if (accounts.length > 0) {
+          setWalletAddress(accounts[0]);
+          const currentChainId = await ethereum.request({ method: "eth_chainId" });
+          setChainId(currentChainId);
+        }
+      }
+    };
+    init();
+  }, []);
+
   return (
     <nav className="flex justify-between lg:relative mx-auto items-center bg-black/30 px-8 py-4">
       {/* Logo and Brand Name */}
@@ -57,7 +88,9 @@ const NavBar = () => {
           }}
           className="flex items-center space-x-2"
         >
-          <p className="border-cyan-700 font-extrabold text-xl">Me<span className="text-[#4782E0]">Realms</span></p>
+          <p className="border-cyan-700 font-extrabold text-xl">
+            Me<span className="text-[#4782E0]">Realms</span>
+          </p>
         </motion.div>
       </Link>
 
@@ -96,36 +129,52 @@ const NavBar = () => {
           />
         </div>
 
+        {/* Chain Selector */}
+        {walletAddress && (
+          <select
+            value={chainId}
+            onChange={(e) => {
+              const selectedChain = CHIANS.find(chain => chain.chainId === Number(e.target.value));
+              if (selectedChain) switchChain(selectedChain);
+            }}
+            className="bg-[#2d2d35] text-white px-4 py-2 rounded-md focus:outline-none"
+          >
+            {CHIANS.map(chain => (
+              <option  key={chain.chainId} value={chain.chainId}>{chain.chainName}</option>
+            ))}
+          </select>
+        )}
+
         {/* Wallet Address Button */}
-
-        {/* {wallet && isConnected && (
+        {walletAddress ? (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <button className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]">
+              {walletAddress.slice(0, 8)}...{walletAddress.slice(-5)}
+            </button>
+            <motion.div whileHover={{ scale: 1.1 }}>
+              <LogOut
+                size={36}
+                onClick={disconnectWallet}
+                style={{ marginLeft: 10, color: "red", cursor: "pointer" }}
+              />
+            </motion.div>
+          </div>
+        ) : (
           <motion.button
             whileHover={{ scale: 1.1 }}
-            className="bg-[#4782E0] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#5892f0]"
-            onClick={handleCopyAddress}
+            className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]"
+            onClick={connectWallet}
           >
-            {slicedAddress}
+            Connect Wallet
           </motion.button>
+        )}
+
+        {/* Display Chain ID if connected
+        {walletAddress && (
+          <div>
+            <p>Chain ID: {chainId}</p>
+          </div>
         )} */}
-
-        {/* {wallet  (
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className=" text-red-500 ml-2 cursor-pointer"
-            onClick={handleDisconnect}
-          >
-            <LogOut size={24} />
-          </motion.button>
-        )} */}
-
-        {/* Connect Button */}
-
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]"
-        >
-          Connect Wallet
-        </motion.button>
       </div>
     </nav>
   );

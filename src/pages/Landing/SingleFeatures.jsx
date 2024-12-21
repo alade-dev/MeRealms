@@ -5,7 +5,7 @@ const SingleFeatures = ({ token, bag, handleTokenClick }) => {
   return (
     <>
       {projects.map((project, index) => (
-      <>
+      < >
           <div key={index} className="flex items-center space-x-4">
             <div className="relative w-full sm:w-auto">
               <img
@@ -14,7 +14,7 @@ const SingleFeatures = ({ token, bag, handleTokenClick }) => {
                 className="w-full sm:w-[180px] h-[170px] object-cover rounded-lg"
               />
               <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white p-2 text-center">
-                <h3 className="text-lg font-bold">{project.name}</h3>
+                <h3 className="text-sm font-bold">{project.name}</h3>
               </div>
             </div>
           </div>

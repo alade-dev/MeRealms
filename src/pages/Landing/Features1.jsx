@@ -36,8 +36,7 @@ const Feature = () => {
 
   // Filter tokens by selected category and duration
   const filteredTokens = tokens.filter(
-    (token) =>
-      token.category === selectedCategory 
+    (token) => token.category === selectedCategory
   );
 
   if (loading) {
@@ -56,9 +55,7 @@ const Feature = () => {
 
   return (
     <div className="p-4 sm:p-6 bg-[#2A2A2A] text-white min-h-screen mx-auto max-w-screen-2xl">
-      <h2 className="text-3xl font-bold mb-4 lg:mb-6 text-center">
-        Realms
-      </h2>
+      <h2 className="text-3xl font-bold mb-4 lg:mb-6 text-center">Realms</h2>
 
       {/* Category and Duration Filters */}
       <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-6 space-y-4 sm:space-y-0 sm:space-x-4">
@@ -104,14 +101,16 @@ const Feature = () => {
           <p></p>
         </div>
         <div className="max-h-[660px] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300/10">
-          <div className="grid grid-cols-[2fr,1fr,1fr,1fr,1fr] gap-4 items-center bg-gray-800/30 rounded-lg p-4 mb-4">
+          <div className="grid grid-cols-[4fr,1fr,1fr,1fr,1fr] gap-4 items-center bg-gray-800/30 rounded-lg p-4 mb-4">
             {filteredTokens.map((token, index) => (
-              <SingleFeatures
-                token={token}
-                bag={bag}
-                handleTokenClick={handleTokenClick}
-                key={index}
-              />
+              <>
+                <SingleFeatures
+                  token={token}
+                  bag={bag}
+                  handleTokenClick={handleTokenClick}
+                  key={index}
+                />
+              </>
             ))}
           </div>
         </div>

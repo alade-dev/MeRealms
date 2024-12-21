@@ -50,7 +50,7 @@ const Hero = () => {
         <img
           src={firstToken.image}
           alt="Meme"
-          className="h-44 w-[250px] rounded-xl object-cover"
+          className="h-44 lg:w-[250px] w-40 rounded-xl object-cover"
         />
         <div className="text-left text-md leading-6">
           <p>
