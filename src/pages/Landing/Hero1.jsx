@@ -11,7 +11,7 @@ import {
   giphy8,
 } from "../../assets/gif/index";
 import RotatingMemes from "../../components/RotatingMemes";
-import ModalForm from "../../components/ModalForm"; // Import the modal component
+import ModalForm from "../../components/ModalForm"; 
 
 const Hero = () => {
   const navigate = useNavigate();

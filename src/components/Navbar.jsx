@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { WalletTgSdk } from "@uxuycom/web3-tg-sdk";
 import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
+// import { useWallet } from "../WalletContext";
 
 let isInjected = localStorage.getItem("__isInjected");
 const walletTgSdk = new WalletTgSdk({ injected: !!isInjected });
@@ -29,6 +30,7 @@ const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [walletAddress, setWalletAddress] = useState(null);
   const [chainId, setChainId] = useState(null);
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -58,7 +60,7 @@ const NavBar = () => {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: `0x${chain.chainId.toString(16)}` }],
       });
-      setChainId(chain.chainId); 
+      setChainId(chain.chainId);
     } catch (error) {
       alert(error.message);
     }
@@ -70,7 +72,9 @@ const NavBar = () => {
         const accounts = await ethereum.request({ method: "eth_accounts" });
         if (accounts.length > 0) {
           setWalletAddress(accounts[0]);
-          const currentChainId = await ethereum.request({ method: "eth_chainId" });
+          const currentChainId = await ethereum.request({
+            method: "eth_chainId",
+          });
           setChainId(currentChainId);
         }
       }
@@ -134,13 +138,17 @@ const NavBar = () => {
           <select
             value={chainId}
             onChange={(e) => {
-              const selectedChain = CHIANS.find(chain => chain.chainId === Number(e.target.value));
+              const selectedChain = CHIANS.find(
+                (chain) => chain.chainId === Number(e.target.value)
+              );
               if (selectedChain) switchChain(selectedChain);
             }}
             className="bg-[#2d2d35] text-white px-4 py-2 rounded-md focus:outline-none"
           >
-            {CHIANS.map(chain => (
-              <option  key={chain.chainId} value={chain.chainId}>{chain.chainName}</option>
+            {CHIANS.map((chain) => (
+              <option key={chain.chainId} value={chain.chainId}>
+                {chain.chainName}
+              </option>
             ))}
           </select>
         )}
