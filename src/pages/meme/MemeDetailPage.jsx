@@ -80,10 +80,10 @@ const MemeDetailPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto p-4">
-        <div className="flex justify-center items-center gap-4 mb-4">
+        <div className="flex justify-center items-center gap-4 lg:mt-14 mt-10 mb-4">
           <div className="bg-blue-500 text-white py-4 bg-transparent px-4 rounded-md font-semibold  transition-colors flex items-center justify-center space-x-2">
-            <span>Vote: </span>
-            <Vote alt="vote" className="w-5 h-5 object-contain" />
+            <span className="text-white text-xl">Vote: </span>
+            <Vote alt="vote" className="w-5 h-5  object-contain" />
           </div>
           <div className="flex  items-center gap-2">
             <button
