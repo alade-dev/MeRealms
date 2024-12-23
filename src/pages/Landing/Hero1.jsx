@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { wallet as wallet1, arrow } from "../../assets/icons/index";
 import {
@@ -26,9 +26,9 @@ const Hero = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleTrendClick = (project) => {
-      console.log(project);
-      navigate(`/meme/${project.name}`, { state: { projectData : project } });
-    };
+    console.log(project);
+    navigate(`/meme/${project.name}`, { state: { projectData: project } });
+  };
 
   const handleLeaderBoard = () => {
     navigate("/leaderboard");
@@ -69,15 +69,6 @@ const Hero = () => {
             </span>
           </p>
           <p>2hrs ago</p>
-          <p>Progress (20%)</p>
-          <br />
-          <p>12k/32k matcap</p>
-          <div className="bg-white rounded-full h-2 w-full mt-1">
-            <div
-              className="bg-[#4782E0] h-2 rounded-full"
-              style={{ width: "20%" }}
-            ></div>
-          </div>
         </div>
       </div>
     );
@@ -113,18 +104,13 @@ const Hero = () => {
               />
             </motion.button>
 
-            
-              <button
-                onClick={handleLeaderBoard}
-                className="bg-transparent text-xl border border-gray-400 text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-600"
-              >
-                <span>Explore</span>
-                <img
-                  src={arrow}
-                  alt="Arrow"
-                  className="w-5 h-5 object-contain"
-                />
-              </button>
+            <button
+              onClick={handleLeaderBoard}
+              className="bg-transparent text-xl border border-gray-400 text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-600"
+            >
+              <span>Explore</span>
+              <img src={arrow} alt="Arrow" className="w-5 h-5 object-contain" />
+            </button>
           </div>
 
           <div className="bg-transparent border cursor-pointer border-fuchsia-300/20 border-r-0 p-6 rounded-xl shadow-md w-full max-w-lg text-center lg:text-left mb-16">
