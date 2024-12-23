@@ -1,5 +1,5 @@
-import  {  useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import {  useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { wallet as wallet1, arrow } from "../../assets/icons/index";
 import {
@@ -11,7 +11,7 @@ import {
   giphy8,
 } from "../../assets/gif/index";
 import RotatingMemes from "../../components/RotatingMemes";
-import ModalForm from "../../components/ModalForm"; 
+import ModalForm from "../../components/ModalForm";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -25,8 +25,13 @@ const Hero = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleTrendClick = (token) => {
-    navigate(`/token/${token.name}`, { state: { tokenData: token } });
+  const handleTrendClick = (project) => {
+      console.log(project);
+      navigate(`/meme/${project.name}`, { state: { projectData : project } });
+    };
+
+  const handleLeaderBoard = () => {
+    navigate("/leaderboard");
   };
 
   const handleCreate = () => {
@@ -36,8 +41,6 @@ const Hero = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
-  
 
   const renderTrendsContent = () => {
     const firstToken = tokens.projects;
@@ -110,8 +113,11 @@ const Hero = () => {
               />
             </motion.button>
 
-            <Link to="/create">
-              <button className="bg-transparent text-xl border border-gray-400 text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-600">
+            
+              <button
+                onClick={handleLeaderBoard}
+                className="bg-transparent text-xl border border-gray-400 text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-gray-600"
+              >
                 <span>Explore</span>
                 <img
                   src={arrow}
@@ -119,7 +125,6 @@ const Hero = () => {
                   className="w-5 h-5 object-contain"
                 />
               </button>
-            </Link>
           </div>
 
           <div className="bg-transparent border cursor-pointer border-fuchsia-300/20 border-r-0 p-6 rounded-xl shadow-md w-full max-w-lg text-center lg:text-left mb-16">

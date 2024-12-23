@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 //   giphy8,
 // } from "../../assets/gif/index";
 import { tokens as data } from "../../data";
-import { bag } from "../../assets/icons";
 import { useNavigate } from "react-router-dom";
 import SingleFeatures from "./SingleFeatures";
 
@@ -49,10 +48,10 @@ const Feature = () => {
     );
   }
 
-  const handleTokenClick = (token) => {
-    navigate(`/token/${token.name}`, { state: { tokenData: token } });
+  const handleTokenClick = (project) => {
+    console.log(project);
+    navigate(`/meme/${project.name}`, { state: { projectData: project } });
   };
-
   return (
     <div className="p-4 sm:p-6 bg-[#2A2A2A] text-white min-h-screen mx-auto max-w-screen-2xl">
       <h2 className="text-3xl font-bold mb-4 lg:mb-6 text-center">Realms</h2>
@@ -93,7 +92,7 @@ const Feature = () => {
       </div>
 
       <div className="w-full">
-        <div className="grid grid-cols-[2fr,1fr,1fr,1fr,1fr] gap-4 mb-4 text-sm text-[#D9D9D9] font-bold">
+        <div className="grid grid-cols-[2fr,1fr,1fr,1fr,1fr] lg:gap-x-16 gap-x-0 mb-4 lg:ml-20 text-xs lg:text-sm text-[#D9D9D9] font-bold">
           <p>Collection</p>
           <p>Created By</p>
           <p>Market Cap</p>
@@ -101,16 +100,13 @@ const Feature = () => {
           <p></p>
         </div>
         <div className="max-h-[660px] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300/10">
-          <div className="grid grid-cols-[4fr,1fr,1fr,1fr,1fr] gap-4 items-center bg-gray-800/30 rounded-lg p-4 mb-4">
+          <div className="grid lg:grid-cols-[4fr,2fr,2fr,2fr,1fr] grid-cols-[4fr,2fr,1fr,1fr,1fr]  gap-4 items-center bg-gray-800/30 rounded-lg p-4 mb-4">
             {filteredTokens.map((token, index) => (
-              <>
-                <SingleFeatures
-                  token={token}
-                  bag={bag}
-                  handleTokenClick={handleTokenClick}
-                  key={index}
-                />
-              </>
+              <SingleFeatures
+                token={token}
+                handleTokenClick={handleTokenClick}
+                key={index}
+              />
             ))}
           </div>
         </div>

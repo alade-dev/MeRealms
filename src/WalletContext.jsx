@@ -44,7 +44,7 @@ export const WalletProvider = ({ children }) => {
   }, [ethereum]);
 
   return (
-    <WalletContext.Provider value={{ walletAddress, chainId, connectWallet, disconnectWallet }}>
+    <WalletContext.Provider value={{ walletAddress, chainId, setChainId, connectWallet, disconnectWallet }}>
       {children}
     </WalletContext.Provider>
   );

@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { WalletTgSdk } from "@uxuycom/web3-tg-sdk";
 import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
-// import { useWallet } from "../WalletContext";
-
+import { CircleUserRound } from "lucide-react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 let isInjected = localStorage.getItem("__isInjected");
 const walletTgSdk = new WalletTgSdk({ injected: !!isInjected });
 const ethereum = isInjected ? window.ethereum : walletTgSdk.ethereum;
@@ -31,9 +32,19 @@ const NavBar = () => {
   const [walletAddress, setWalletAddress] = useState(null);
   const [chainId, setChainId] = useState(null);
 
+  const navigate = useNavigate();
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    toast("Wallet address copied to clipboard");
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const UserProfile = () => {
+    navigate(`/profile/${walletAddress}`, { state: { walletAddress } });
   };
 
   const connectWallet = async () => {
@@ -44,6 +55,7 @@ const NavBar = () => {
       setWalletAddress(accounts[0]);
       const currentChainId = await ethereum.request({ method: "eth_chainId" });
       setChainId(currentChainId);
+      localStorage.setItem("__isInjected", "true"); // Set local storage on connect
     } catch (error) {
       alert(error.message);
     }
@@ -52,6 +64,7 @@ const NavBar = () => {
   const disconnectWallet = () => {
     setWalletAddress(null);
     setChainId(null);
+    localStorage.removeItem("__isInjected");
   };
 
   const switchChain = async (chain) => {
@@ -156,16 +169,26 @@ const NavBar = () => {
         {/* Wallet Address Button */}
         {walletAddress ? (
           <div style={{ display: "flex", alignItems: "center" }}>
-            <button className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]">
+            <button
+              onClick={() => copyToClipboard(walletAddress)}
+              className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]"
+            >
               {walletAddress.slice(0, 8)}...{walletAddress.slice(-5)}
             </button>
             <motion.div whileHover={{ scale: 1.1 }}>
               <LogOut
                 size={36}
                 onClick={disconnectWallet}
-                style={{ marginLeft: 10, color: "red", cursor: "pointer" }}
+                style={{ marginLeft: 3, color: "red", cursor: "pointer" }}
               />
             </motion.div>
+            <button className="p-2 ml-6 hover:bg-gray-800 rounded-full transition-colors">
+              <CircleUserRound
+                onClick={UserProfile}
+                className=" text-[#4885e7] cursor-pointer"
+                size={36}
+              />
+            </button>
           </div>
         ) : (
           <motion.button
@@ -176,13 +199,6 @@ const NavBar = () => {
             Connect Wallet
           </motion.button>
         )}
-
-        {/* Display Chain ID if connected
-        {walletAddress && (
-          <div>
-            <p>Chain ID: {chainId}</p>
-          </div>
-        )} */}
       </div>
     </nav>
   );
