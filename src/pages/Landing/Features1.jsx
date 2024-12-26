@@ -95,8 +95,8 @@ const Feature = () => {
         <div className="grid grid-cols-[2fr,1fr,1fr,1fr,1fr] lg:gap-x-16 gap-x-0 mb-4 lg:ml-20 text-xs lg:text-sm text-[#D9D9D9] font-bold">
           <p>Collection</p>
           <p>Created By</p>
-          <p>Market Cap</p>
           <p>Votes</p>
+          <p>Status</p>
           <p></p>
         </div>
         <div className="max-h-[660px] overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-300/10">

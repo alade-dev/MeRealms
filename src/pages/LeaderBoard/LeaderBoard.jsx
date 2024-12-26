@@ -28,7 +28,7 @@ const LeaderboardPage = () => {
   const navigate = useNavigate();
 
   const handleTokenClick = (project) => {
-    console.log(project);
+    // console.log(project);
     navigate(`/meme/${project.name}`, { state: { projectData: project } });
   };
 

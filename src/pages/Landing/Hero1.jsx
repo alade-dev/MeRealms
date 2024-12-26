@@ -20,13 +20,13 @@ const Hero = () => {
       name: "Crying Nikita",
       image: giphy6,
       createdBy: "Joshj",
+      description: "This is a meme and Dao token",
     },
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleTrendClick = (project) => {
-    console.log(project);
     navigate(`/meme/${project.name}`, { state: { projectData: project } });
   };
 

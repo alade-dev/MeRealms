@@ -26,7 +26,7 @@ const MemeDetailPage = () => {
     return <div>Project data not found.</div>;
   }
 
-  const { image, createdBy, voters, name } = projectData;
+  const { image, createdBy, voters, name, description } = projectData;
 
   const handleLike = () => {
     setLiked(!liked);
@@ -128,10 +128,15 @@ const MemeDetailPage = () => {
               />
               <div className="p-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h1 className="text-xl bg-gradient-to-r from-[#4782E0] to-fuchsia-300 bg-clip-text text-transparent font-bold">{name}</h1>
+                  <h1 className="text-xl bg-gradient-to-r from-[#4782E0] to-fuchsia-300 bg-clip-text text-transparent font-bold">
+                    {name}
+                  </h1>
                   <span className="text-sm text-gray-400">
                     Created by {createdBy}
                   </span>
+                </div>
+                <div className="mb-4">
+                  <p className="text-gray-300">{description}</p>
                 </div>
 
                 {/* Interaction Buttons */}
