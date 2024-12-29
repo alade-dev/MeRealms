@@ -134,6 +134,7 @@ const ModalForm = ({ onClose }) => {
               accept="image/*"
               onChange={handleChange}
               className="w-full text-gray-300"
+              required
             />
           </div>
 

@@ -72,6 +72,7 @@ const NavBar = () => {
     setWalletAddress(null);
     setChainId(null);
     localStorage.removeItem("__isInjected");
+    localStorage.clear();
   };
 
   const switchChain = async (chain) => {
@@ -179,7 +180,7 @@ const NavBar = () => {
           isMenuOpen ? "block" : "hidden"
         } md:flex md:items-center md:space-x-6 absolute md:static top-16 left-0 w-full md:w-auto bg-black/30 md:bg-transparent p-4 md:p-0 z-10`}
       >
-        <div className="block md:hidden items-center space-x-2 bg-[#2d2d35] px-4 py-2 mb-3 w-[300px] hover:border-gray-500 focus-within:border-gray-500 transition-colors rounded-md">
+        <div className="block sm:hidden items-center space-x-2 bg-[#2d2d35] px-4 py-2 mb-3 w-[300px] hover:border-gray-500 focus-within:border-gray-500 transition-colors rounded-md">
           <input
             type="text"
             placeholder="Search"
