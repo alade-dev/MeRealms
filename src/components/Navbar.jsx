@@ -12,18 +12,18 @@ const ethereum = isInjected ? window.ethereum : walletTgSdk.ethereum;
 
 const CHIANS = [
   {
-    chainId: 56,
+    chainId: 97,
     chainKey: "binance",
     chainName: "Binance",
     chainSymbol: "BNB",
-    chainRPCs: ["https://bnb.rpc.subquery.network/public"],
+    chainRPCs: ["https://bsc-testnet-rpc.publicnode.com"],
   },
   {
-    chainId: 204,
+    chainId: 5611,
     chainKey: "opbnb",
     chainName: "opBNB",
     chainSymbol: "BNB",
-    chainRPCs: ["https://opbnb-mainnet-rpc.bnbchain.org"],
+    chainRPCs: ["https://opbnb-testnet-rpc.publicnode.com"],
   },
 ];
 
