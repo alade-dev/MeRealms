@@ -13,10 +13,10 @@ const ethereum = isInjected ? window.ethereum : walletTgSdk.ethereum;
 const CHIANS = [
   {
     chainId: 97,
-    chainKey: "binance",
-    chainName: "Binance",
-    chainSymbol: "BNB",
-    chainRPCs: ["https://bsc-testnet-rpc.publicnode.com"],
+    chainKey: "binancetestnet",
+    chainName: "Binance Testnet",
+    chainSymbol: "tBNB",
+    chainRPCs: ["https://data-seed-prebsc-2-s1.bnbchain.org:8545"],
   },
   {
     chainId: 5611,
@@ -24,6 +24,13 @@ const CHIANS = [
     chainName: "opBNB",
     chainSymbol: "BNB",
     chainRPCs: ["https://opbnb-testnet-rpc.publicnode.com"],
+  },
+  {
+    chainId: 56,
+    chainKey: "binance",
+    chainName: "Binance",
+    chainSymbol: "BNB",
+    chainRPCs: ["https://bnb.rpc.subquery.network/public"],
   },
 ];
 
@@ -69,10 +76,44 @@ const NavBar = () => {
 
   const switchChain = async (chain) => {
     try {
+      // await ethereum.request({
+      //   method: "wallet_switchEthereumChain",
+      //   params: [{ chainId: `0x${chain.chainId.toString(16)}` }],
+      // });
+      // or switch error handle and add chain
       await ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: `0x${chain.chainId.toString(16)}` }],
-      });
+        "method": "wallet_switchEthereumChain",
+        "params": [
+            {
+                chainId: `0x${chain.chainId.toString(16)}`
+            }
+        ],
+    }).catch(async error => {
+        if (error.code == 4902) {
+            await ethereum.request({
+                "method": "wallet_addEthereumChain",
+                "params": [
+                    {
+                        "chainId": `0x${chain.chainId.toString(16)}`,
+                        "chainName": "BSC Testnet",
+                        "rpcUrls": [
+                            "https://data-seed-prebsc-2-s1.bnbchain.org:8545"
+                        ],
+                        "nativeCurrency": {
+                            "name": "tBNB",
+                            "symbol": "tBNB",
+                            "decimals": 18
+                        },
+                        "blockExplorerUrls": [
+                            "https://testnet.bscscan.com/"
+                        ]
+                    }
+                ],
+            })
+        }
+    })
+    
+      console.log("Switched to chain:", chain.chainId);
       setChainId(chain.chainId);
     } catch (error) {
       alert(error.message);

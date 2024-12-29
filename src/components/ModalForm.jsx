@@ -1,5 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
+import { WalletTgSdk } from "@uxuycom/web3-tg-sdk";
+import { ethers } from "ethers";
+import { createMeme } from "../contractAPI";
+
+
+let isInjected = localStorage.getItem("__isInjected");
+const walletTgSdk = new WalletTgSdk({ injected: !!isInjected });
+const ethereum = isInjected ? window.ethereum : walletTgSdk.ethereum;
 
 const ModalForm = ({ onClose }) => {
   const [formData, setFormData] = useState({
@@ -34,9 +42,15 @@ const ModalForm = ({ onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const  chainId  =  await ethereum.request({ method: 'eth_chainId' });
+    console.log("chainId", chainId);
+    const provider = new ethers.BrowserProvider(ethereum);
+    const signer = await provider.getSigner();
     console.log("Form Data Submitted:", formData);
+    await createMeme(signer, formData);
     // Perform submission logic here
     onClose(); // Close the modal
   };
