@@ -82,38 +82,36 @@ const NavBar = () => {
       //   params: [{ chainId: `0x${chain.chainId.toString(16)}` }],
       // });
       // or switch error handle and add chain
-      await ethereum.request({
-        "method": "wallet_switchEthereumChain",
-        "params": [
+      await ethereum
+        .request({
+          method: "wallet_switchEthereumChain",
+          params: [
             {
-                chainId: `0x${chain.chainId.toString(16)}`
-            }
-        ],
-    }).catch(async error => {
-        if (error.code == 4902) {
+              chainId: `0x${chain.chainId.toString(16)}`,
+            },
+          ],
+        })
+        .catch(async (error) => {
+          if (error.code == 4902) {
             await ethereum.request({
-                "method": "wallet_addEthereumChain",
-                "params": [
-                    {
-                        "chainId": `0x${chain.chainId.toString(16)}`,
-                        "chainName": "BSC Testnet",
-                        "rpcUrls": [
-                            "https://data-seed-prebsc-2-s1.bnbchain.org:8545"
-                        ],
-                        "nativeCurrency": {
-                            "name": "tBNB",
-                            "symbol": "tBNB",
-                            "decimals": 18
-                        },
-                        "blockExplorerUrls": [
-                            "https://testnet.bscscan.com/"
-                        ]
-                    }
-                ],
-            })
-        }
-    })
-    
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: `0x${chain.chainId.toString(16)}`,
+                  chainName: "BSC Testnet",
+                  rpcUrls: ["https://data-seed-prebsc-2-s1.bnbchain.org:8545"],
+                  nativeCurrency: {
+                    name: "tBNB",
+                    symbol: "tBNB",
+                    decimals: 18,
+                  },
+                  blockExplorerUrls: ["https://testnet.bscscan.com/"],
+                },
+              ],
+            });
+          }
+        });
+
       console.log("Switched to chain:", chain.chainId);
       setChainId(chain.chainId);
     } catch (error) {
@@ -138,109 +136,113 @@ const NavBar = () => {
   }, []);
 
   return (
-    <nav className="flex justify-between lg:relative mx-auto items-center bg-black/30 px-8 py-4">
+    <nav className="lg:relative  bg-black/30 px-8 py-4">
       {/* Logo and Brand Name */}
-      <Link to="/">
-        <motion.div
-          whileHover={{
-            scale: 1.1,
-          }}
-          className="flex items-center space-x-2"
-        >
-          <p className="border-cyan-700 font-extrabold text-xl">
-            Me<span className="text-[#4782E0]">Realms</span>
-          </p>
-        </motion.div>
-      </Link>
-
-      {/* Hamburger Button */}
-      <button
-        className="md:hidden text-white hover:text-[#F5167E] focus:outline-none"
-        onClick={toggleMenu}
-      >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
-          />
-        </svg>
-      </button>
-
-      {/* Navigation Links */}
-      <div
-        className={`${
-          isMenuOpen ? "block" : "hidden"
-        } md:flex md:items-center md:space-x-6 absolute md:static top-16 left-0 w-full md:w-auto bg-black/30 md:bg-transparent p-4 md:p-0 z-10`}
-      >
-        <div className="block sm:hidden items-center space-x-2 bg-[#2d2d35] px-4 py-2 mb-3 w-[300px] hover:border-gray-500 focus-within:border-gray-500 transition-colors rounded-md">
-          <input
-            type="text"
-            placeholder="Search"
-            className="bg-[#2d2d35] text-white px-4 py-1 rounded-l-md focus:outline-none w-full"
-          />
-        </div>
-
-        {/* Chain Selector */}
-        {walletAddress && (
-          <select
-            value={chainId}
-            onChange={(e) => {
-              const selectedChain = CHIANS.find(
-                (chain) => chain.chainId === Number(e.target.value)
-              );
-              if (selectedChain) switchChain(selectedChain);
+      <div className="flex justify-between mx-auto items-center max-w-[1500px] ">
+        <Link to="/">
+          <motion.div
+            whileHover={{
+              scale: 1.1,
             }}
-            className="bg-[#2d2d35] text-white px-4 py-2 rounded-md focus:outline-none"
+            className="flex items-center space-x-2"
           >
-            {CHIANS.map((chain) => (
-              <option key={chain.chainId} value={chain.chainId}>
-                {chain.chainName}
-              </option>
-            ))}
-          </select>
-        )}
+            <p className="border-cyan-700 font-extrabold text-xl">
+              Me<span className="text-[#4782E0]">Realms</span>
+            </p>
+          </motion.div>
+        </Link>
 
-        {/* Wallet Address Button */}
-        {walletAddress ? (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <button
-              onClick={() => copyToClipboard(walletAddress)}
-              className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]"
-            >
-              {walletAddress.slice(0, 8)}...{walletAddress.slice(-5)}
-            </button>
-            <motion.div whileHover={{ scale: 1.1 }}>
-              <LogOut
-                size={36}
-                onClick={disconnectWallet}
-                style={{ marginLeft: 3, color: "red", cursor: "pointer" }}
-              />
-            </motion.div>
-            <button className="p-2 ml-6 hover:bg-gray-800 rounded-full transition-colors">
-              <CircleUserRound
-                onClick={UserProfile}
-                className=" text-[#4885e7] cursor-pointer"
-                size={36}
-              />
-            </button>
-          </div>
-        ) : (
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]"
-            onClick={connectWallet}
+        {/* Hamburger Button */}
+        <button
+          className="md:hidden text-white hover:text-[#F5167E] focus:outline-none"
+          onClick={toggleMenu}
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Connect Wallet
-          </motion.button>
-        )}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d={
+                isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"
+              }
+            />
+          </svg>
+        </button>
+
+        {/* Navigation Links */}
+        <div
+          className={`${
+            isMenuOpen ? "block" : "hidden"
+          } md:flex md:items-center md:space-x-6 absolute md:static top-16 left-0 w-full md:w-auto bg-black/30 md:bg-transparent p-4 md:p-0 z-10`}
+        >
+          <div className="block sm:hidden items-center space-x-2 bg-[#2d2d35] px-4 py-2 mb-3 w-[300px] hover:border-gray-500 focus-within:border-gray-500 transition-colors rounded-md">
+            <input
+              type="text"
+              placeholder="Search"
+              className="bg-[#2d2d35] text-white px-4 py-1 rounded-l-md focus:outline-none w-full"
+            />
+          </div>
+
+          {/* Chain Selector */}
+          {walletAddress && (
+            <select
+              value={chainId}
+              onChange={(e) => {
+                const selectedChain = CHIANS.find(
+                  (chain) => chain.chainId === Number(e.target.value)
+                );
+                if (selectedChain) switchChain(selectedChain);
+              }}
+              className="bg-[#2d2d35] text-white px-4 py-2 rounded-md focus:outline-none"
+            >
+              {CHIANS.map((chain) => (
+                <option key={chain.chainId} value={chain.chainId}>
+                  {chain.chainName}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {/* Wallet Address Button */}
+          {walletAddress ? (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <button
+                onClick={() => copyToClipboard(walletAddress)}
+                className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]"
+              >
+                {walletAddress.slice(0, 8)}...{walletAddress.slice(-5)}
+              </button>
+              <motion.div whileHover={{ scale: 1.1 }}>
+                <LogOut
+                  size={36}
+                  onClick={disconnectWallet}
+                  style={{ marginLeft: 3, color: "red", cursor: "pointer" }}
+                />
+              </motion.div>
+              <button className="p-2 ml-6 hover:bg-gray-800 rounded-full transition-colors">
+                <CircleUserRound
+                  onClick={UserProfile}
+                  className=" text-[#4885e7] cursor-pointer"
+                  size={36}
+                />
+              </button>
+            </div>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              className="bg-[#4885e7] transition-colors duration-200 text-white px-4 py-3 text-md rounded-md hover:bg-[#4782E0]"
+              onClick={connectWallet}
+            >
+              Connect Wallet
+            </motion.button>
+          )}
+        </div>
       </div>
     </nav>
   );
