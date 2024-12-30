@@ -138,7 +138,7 @@ const AIAssistantWidget = ({ memeDetails = null }) => {
       {isOpen && (
         <div
           ref={AIref}
-          className="bg-[#242424] border border-blue-500 rounded-lg lg:w-[400px] mb-4 overflow-hidden shadow-lg"
+          className="bg-[#242424] border border-blue-500 rounded-lg lg:w-[400px] max-w-96 sm:h-fit h-[550px] mb-4 overflow-hidden shadow-lg"
         >
           <div className="flex justify-between items-center p-4 border-b border-blue-500">
             <h3 className="bg-gradient-to-r from-[#4782E0] to-fuchsia-300 bg-clip-text text-transparent font-mono">
