@@ -44,9 +44,6 @@ const ModalForm = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const  chainId  =  await ethereum.request({ method: 'eth_chainId' });
-    console.log("chainId", chainId);
     const provider = new ethers.BrowserProvider(ethereum);
     const signer = await provider.getSigner();
     console.log("Form Data Submitted:", formData);

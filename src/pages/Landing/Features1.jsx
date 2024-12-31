@@ -10,6 +10,15 @@ import { useEffect, useState } from "react";
 import { tokens as data } from "../../data";
 import { useNavigate } from "react-router-dom";
 import SingleFeatures from "./SingleFeatures";
+import { WalletTgSdk } from "@uxuycom/web3-tg-sdk";
+import { ethers } from "ethers";
+import { getMemes } from "../../contractAPI";
+
+
+
+let isInjected = localStorage.getItem("__isInjected");
+const walletTgSdk = new WalletTgSdk({ injected: !!isInjected });
+const ethereum = isInjected ? window.ethereum : walletTgSdk.ethereum;
 
 const Feature = () => {
   const [selectedCategory, setSelectedCategory] = useState("Hot");
@@ -23,6 +32,9 @@ const Feature = () => {
       try {
         setLoading(true);
         setTokens(data);
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        await getMemes(signer);
       } catch (error) {
         console.log(error);
       } finally {
