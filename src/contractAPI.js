@@ -1,6 +1,6 @@
+import axios from 'axios';
 import { ethers } from "ethers";
 import abi from "./MemeRealms.json";
-import axios from 'axios';
 
 const contractAddress = "0x633945C363c5caBABea7481339DA1bb56Ff0597D";
 
@@ -54,7 +54,7 @@ export async function getMemes() {
           description: meme.desc,
           status: "Live",
           projectStatus: "Live project",
-          assetId: meme._id.$oid,
+          assetId: meme._id,
           chainId: meme.chain_id,
           owner: ''
         }
@@ -68,16 +68,53 @@ export async function getMemes() {
   }
 }
 
-//   const reader = new window.FileReader();
-//   reader.readAsArrayBuffer(image);
-//   reader.onloadend = async () => {
-//     const buffer = Buffer.from(reader.result);
-//     const ipfs = create({
-//       host: "ipfs.infura.io",
-//       port: 5001,
-//       protocol: "https",
-//     });
-//     const { path } = await ipfs.add(buffer);
-//     const tokenURI = `https://ipfs.infura.io/ipfs/${path}`;
-//     await contract.createToken(name, description, tokenURI, createdBy);
-//   };
+export async function likeMeme(memeId, user) {
+  try {
+    const response = await axios.post(`http://localhost:3000/memes/${memeId}/like`, { user });
+    console.log("Meme liked successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error liking meme:", error);
+    throw new Error("Failed to like meme");
+  }
+}
+
+export async function voteOnMeme(memeId, user) {
+  try {
+    const response = await axios.post(`http://localhost:3000/memes/${memeId}/vote`, { user });
+    console.log("Vote added successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error voting on meme:", error);
+    throw new Error("Failed to vote on meme");
+  }
+}
+
+export async function commentOnMeme(memeId, comment, user) {
+  try {
+    const response = await axios.post(`http://localhost:3000/memes/${memeId}/comments`, { comment, user });
+    console.log("Comment added successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    throw new Error("Failed to add comment");
+  }
+}
+
+export async function tipMeme(signer, memeId, chainId, amount) {
+  const contract = await getContract(signer);
+  try {
+    const tx = await contract.supportCreator(chainId, { value: ethers.parseEther(String(amount)) });
+    await tx.wait();
+    const response = await axios.post(`http://localhost:3000/memes/${memeId}/tip`, { amount });
+    console.log("Meme tipped successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error tipping meme:", error);
+    throw new Error("Failed to tip meme");
+  }
+}
+
+export async function updateProfile() {
+  // Update user profile
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Vote,
   Heart,
@@ -9,6 +9,13 @@ import {
   ArrowDown,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { likeMeme, commentOnMeme, tipMeme, voteOnMeme } from "../../contractAPI"; // Adjust the import path as needed
+import { ethers } from "ethers";
+import { WalletTgSdk } from "@uxuycom/web3-tg-sdk";
+
+let isInjected = localStorage.getItem("__isInjected");
+const walletTgSdk = new WalletTgSdk({ injected: !!isInjected });
+const ethereum = isInjected ? window.ethereum : walletTgSdk.ethereum;
 
 const MemeDetailPage = () => {
   const [liked, setLiked] = useState(false);
@@ -22,47 +29,77 @@ const MemeDetailPage = () => {
   const location = useLocation();
   const { projectData } = location.state || {};
 
+  useEffect(() => {
+    if (projectData) {
+      setComments(projectData.comments || []);
+      setVoteCount(projectData.votes || 0);
+    }
+  }, [projectData]);
+
   if (!projectData) {
     return <div>Project data not found.</div>;
   }
 
-  const { image, createdBy, voters, name, description } = projectData;
+  const { image, createdBy, voters, name, description, assetId, chainId } = projectData;
+  console.log(projectData);
 
-  const handleLike = () => {
-    setLiked(!liked);
+  const handleLike = async () => {
+    try {
+      await likeMeme(assetId, "Current User"); // Replace "Current User" with the actual user
+      setLiked(!liked);
+    } catch (error) {
+      console.error("Error liking meme:", error);
+    }
   };
 
-  const handleComment = (e) => {
+  const handleComment = async (e) => {
     e.preventDefault();
     if (newComment.trim()) {
-      setComments([
-        ...comments,
-        {
-          id: Date.now(),
-          text: newComment,
-          user: "Current User",
-          timestamp: new Date().toISOString(),
-        },
-      ]);
-      setNewComment("");
+      try {
+        await commentOnMeme(assetId, newComment, "Current User"); // Replace "Current User" with the actual user
+        setComments([
+          ...comments,
+          {
+            id: Date.now(),
+            text: newComment,
+            user: "Current User",
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+        setNewComment("");
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
     }
   };
 
-  const handleTip = () => {
+  const handleTip = async () => {
     if (tipAmount && !isNaN(tipAmount)) {
-      console.log("Sending tip:", tipAmount);
-      // setShowTipInput(false);
-      setTipAmount("");
+      try {
+        const provider = new ethers.BrowserProvider(ethereum);
+        const signer = await provider.getSigner();
+        await tipMeme(signer, assetId, chainId, parseFloat(tipAmount));
+        console.log("Tip sent:", tipAmount);
+        setTipAmount("");
+        setShowTipInput(false);
+      } catch (error) {
+        console.error("Error sending tip:", error);
+      }
     }
   };
 
-  const handleVote = (direction) => {
-    if (voteStatus === direction) {
-      setVoteStatus(0);
-      setVoteCount(voteCount - direction);
-    } else {
-      setVoteCount(voteCount - voteStatus + direction);
-      setVoteStatus(direction);
+  const handleVote = async (direction) => {
+    try {
+      await voteOnMeme(assetId, "Current User"); // Replace "Current User" with the actual user
+      if (voteStatus === direction) {
+        setVoteStatus(0);
+        setVoteCount(voteCount - direction);
+      } else {
+        setVoteCount(voteCount - voteStatus + direction);
+        setVoteStatus(direction);
+      }
+    } catch (error) {
+      console.error("Error voting on meme:", error);
     }
   };
 
