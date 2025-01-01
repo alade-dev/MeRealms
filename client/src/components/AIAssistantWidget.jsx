@@ -6,14 +6,13 @@ const AIAssistantWidget = ({ memeDetails = null }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [threadId, setThreadId] = useState(null);
   const chatEndRef = useRef(null);
 
-  // Dummy chat history with useState to allow updates
   const [chatHistory, setChatHistory] = useState([
     {
       type: "assistant",
-      content:
-        "Hello! I'm RealmsAI. How can I help you with meme insight today?",
+      content: "Hello! I'm RealmsAI. How can I help you with meme insight today?",
       timestamp: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
@@ -38,6 +37,7 @@ const AIAssistantWidget = ({ memeDetails = null }) => {
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory]);
@@ -52,21 +52,38 @@ const AIAssistantWidget = ({ memeDetails = null }) => {
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
-  // Simulated AI response generator
-  const generateAIResponse = (userMessage) => {
-    const responses = [
-      "Based on current trends, your meme has great potential! The format is particularly popular with crypto enthusiasts. Would you like specific improvement suggestions?",
-      "I've analyzed similar successful memes. Your concept is unique, but we could enhance its viral potential. Want to see some examples?",
-      "Great idea! This type of meme typically performs well on Twitter and Reddit. Shall we optimize it for these platforms?",
-      "The meme's structure is solid! Consider adding more trending elements to increase engagement. Would you like some suggestions?",
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
+  const sendMessageToBackend = async (messageText) => {
+    const endpoint = threadId 
+      ? `http://localhost:3000/chat/${threadId}`
+      : 'http://localhost:3000/chat';
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: messageText }),
+      });
+
+      if (!response.ok) throw new Error('Network response was not ok');
+      
+      const data = await response.json();
+      
+      if (!threadId && data.threadId) {
+        setThreadId(data.threadId);
+      }
+
+      return data.response;
+    } catch (error) {
+      console.error('Error sending message:', error);
+      return 'Sorry, I encountered an error processing your request.';
+    }
   };
 
   const handleSendMessage = async () => {
@@ -84,22 +101,25 @@ const AIAssistantWidget = ({ memeDetails = null }) => {
     setMessage("");
 
     setIsTyping(true);
-    setTimeout(() => {
+    try {
+      const response = await sendMessageToBackend(message);
       const aiResponse = {
         type: "assistant",
-        content: generateAIResponse(message),
+        content: response,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
       };
       setChatHistory((prev) => [...prev, aiResponse]);
+    } catch (error) {
+      console.error("Error calling agent:", error);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
-  // Handle suggestion click
-  const handleSuggestionClick = (suggestion) => {
+  const handleSuggestionClick = async (suggestion) => {
     const userMessage = {
       type: "user",
       content: suggestion,
@@ -110,24 +130,27 @@ const AIAssistantWidget = ({ memeDetails = null }) => {
     };
     setChatHistory((prev) => [...prev, userMessage]);
 
-    // Simulate AI typing
     setIsTyping(true);
-    setTimeout(() => {
+    try {
+      const response = await sendMessageToBackend(suggestion);
       const aiResponse = {
         type: "assistant",
-        content: generateAIResponse(suggestion),
+        content: response,
         timestamp: new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         }),
       };
       setChatHistory((prev) => [...prev, aiResponse]);
+    } catch (error) {
+      console.error("Error processing suggestion:", error);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftOrder) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }

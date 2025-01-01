@@ -161,7 +161,7 @@ const MemeDetailPage = () => {
               <img
                 src={image}
                 alt={name}
-                className="w-full object-cover max-h-[500px]"
+                className="w-full object-fill max-h-[500px]"
               />
               <div className="p-4">
                 <div className="flex justify-between items-center mb-4">
