@@ -28,11 +28,13 @@ const MemeDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { projectData } = location.state || {};
+  const currentUser = "Horlarmmy"; // Replace with the actual user
 
   useEffect(() => {
     if (projectData) {
       setComments(projectData.comments || []);
       setVoteCount(projectData.votes || 0);
+      setLiked(projectData.likes ? projectData.likes.includes(currentUser) : false);
     }
   }, [projectData]);
 
@@ -45,7 +47,7 @@ const MemeDetailPage = () => {
 
   const handleLike = async () => {
     try {
-      await likeMeme(assetId, "Current User"); // Replace "Current User" with the actual user
+      await likeMeme(assetId, currentUser);
       setLiked(!liked);
     } catch (error) {
       console.error("Error liking meme:", error);
@@ -56,13 +58,13 @@ const MemeDetailPage = () => {
     e.preventDefault();
     if (newComment.trim()) {
       try {
-        await commentOnMeme(assetId, newComment, "Current User"); // Replace "Current User" with the actual user
+        await commentOnMeme(assetId, newComment, currentUser);
         setComments([
           ...comments,
           {
             id: Date.now(),
             text: newComment,
-            user: "Current User",
+            user: currentUser,
             timestamp: new Date().toISOString(),
           },
         ]);
@@ -90,7 +92,7 @@ const MemeDetailPage = () => {
 
   const handleVote = async (direction) => {
     try {
-      await voteOnMeme(assetId, "Current User"); // Replace "Current User" with the actual user
+      await voteOnMeme(assetId, currentUser);
       if (voteStatus === direction) {
         setVoteStatus(0);
         setVoteCount(voteCount - direction);

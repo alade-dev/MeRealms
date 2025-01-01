@@ -10,7 +10,7 @@ export async function getContract(signer) {
 
 export async function createMeme(signer, formData) {
   const { name, description, createdBy, image } = formData;
-  const imgUrl = 'https://i.ytimg.com/vi/bJXqh377SfU/maxresdefault.jpg';
+  const imgUrl = 'https://i.redd.it/ke53iac4gg331.jpg';
   const contract = await getContract(signer);
 
   try {
@@ -56,6 +56,7 @@ export async function getMemes() {
           projectStatus: "Live project",
           assetId: meme._id,
           chainId: meme.chain_id,
+          likes: meme.likes,
           owner: ''
         }
       ]

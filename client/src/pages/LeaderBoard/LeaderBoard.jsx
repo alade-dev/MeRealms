@@ -1,16 +1,32 @@
+import { useEffect, useState } from "react";
 import { Crown, Trophy, Medal } from "lucide-react";
-import tokens from "../../data";
 import { useNavigate } from "react-router-dom";
+import { getMemes } from "../../contractAPI";
 
 const LeaderboardPage = () => {
-  const allProjects = tokens
-    .flatMap((category) =>
-      category.projects.map((project) => ({
-        ...project,
-        voters: parseInt(project.voters.replace("k", "000")),
-      }))
-    )
-    .sort((a, b) => b.voters - a.voters);
+  const [allProjects, setAllProjects] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchMemes = async () => {
+      try {
+        const memes = await getMemes();
+        const sortedMemes = memes
+          .flatMap((category) =>
+            category.projects.map((project) => ({
+              ...project,
+              voters: parseInt(project.voters.replace("k", "000")),
+            }))
+          )
+          .sort((a, b) => b.voters - a.voters);
+        setAllProjects(sortedMemes);
+      } catch (error) {
+        console.error("Error fetching memes:", error);
+      }
+    };
+
+    fetchMemes();
+  }, []);
 
   const getRankIcon = (index) => {
     switch (index) {
@@ -24,8 +40,6 @@ const LeaderboardPage = () => {
         return null;
     }
   };
-
-  const navigate = useNavigate();
 
   const handleTokenClick = (project) => {
     // console.log(project);
