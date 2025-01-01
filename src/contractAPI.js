@@ -10,13 +10,13 @@ export async function getContract(signer) {
 
 export async function createMeme(signer, formData) {
   const { name, description, createdBy, image } = formData;
-  const imgUrl = 'https://i.pinimg.com/originals/0a/bb/e5/0abbe546e479edc1eb62f5a8ccd66328.jpg';
+  const imgUrl = 'https://i.ytimg.com/vi/bJXqh377SfU/maxresdefault.jpg';
   const contract = await getContract(signer);
 
   try {
-    // const tx = await contract.submitMeme(name, imgUrl);
-    // await tx.wait();
-    // console.log("Token created successfully:", tx);
+    const tx = await contract.submitMeme(name, imgUrl);
+    await tx.wait();
+    console.log("Token created successfully:", tx);
     const memeCount = await contract.memeCount().then((count) => count.toString());
 
     // After the transaction is successful, include the meme in the database
@@ -35,24 +35,37 @@ export async function createMeme(signer, formData) {
   }
 }
 
-export async function getMemes(signer) {
-  let memes = [];
+export async function getMemes() {
   try {
-    const contract = await getContract(signer);
-    const memeCount = await contract.memeCount();
-    console.log("Meme Count", memeCount);
+    const response = await axios.get('http://localhost:3000/memes');
+    const memes_db = response.data;
+    console.log("Memes fetched from database:", memes_db);
 
-    for (let i = 0; i < memeCount; i++) {
-      const meme = await contract.memes(i);
-      memes.push(meme);
-      console.log("Meme:", meme);
-    }
+    // Restructure the data
+    const memes = memes_db.map(meme => ({
+      category: "Hot",
+      duration: "1h",
+      projects: [
+        {
+          name: meme.name,
+          image: meme.imgUrl,
+          createdBy: meme.createdBy,
+          voters: meme.votes.toString(),
+          description: meme.desc,
+          status: "Live",
+          projectStatus: "Live project",
+          assetId: meme._id.$oid,
+          chainId: meme.chain_id,
+          owner: ''
+        }
+      ]
+    }));
+
+    return memes;
   } catch (error) {
-    console.error("Error fetching memes:", error);
-    throw new Error("Failed to fetch memes");
+    console.error("Error fetching memes from database:", error);
+    throw new Error("Failed to fetch memes from database");
   }
-
-  return memes;
 }
 
 //   const reader = new window.FileReader();

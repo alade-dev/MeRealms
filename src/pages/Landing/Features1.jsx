@@ -31,10 +31,12 @@ const Feature = () => {
     const fetchTokens = async () => {
       try {
         setLoading(true);
-        setTokens(data);
-        const provider = new ethers.BrowserProvider(ethereum);
-        const signer = await provider.getSigner();
-        await getMemes(signer);
+        // setTokens(data);
+        // const provider = new ethers.BrowserProvider(ethereum);
+        // const signer = await provider.getSigner();
+        const memes = await getMemes();
+        console.log(memes)
+        setTokens(memes);
       } catch (error) {
         console.log(error);
       } finally {
@@ -43,7 +45,7 @@ const Feature = () => {
     };
 
     fetchTokens();
-  }, [tokens]);
+  }, []); // Remove tokens from the dependency array
 
   // Filter tokens by selected category and duration
   const filteredTokens = tokens.filter(
