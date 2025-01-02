@@ -33,7 +33,7 @@ const MemeDetailPage = () => {
   useEffect(() => {
     if (projectData) {
       setComments(projectData.comments || []);
-      setVoteCount(projectData.votes || 0);
+      setVoteCount(projectData.voters || 0);
       setLiked(projectData.likes ? projectData.likes.includes(currentUser) : false);
     }
   }, [projectData]);

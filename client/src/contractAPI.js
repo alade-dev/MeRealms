@@ -10,7 +10,7 @@ export async function getContract(signer) {
 
 export async function createMeme(signer, formData) {
   const { name, description, createdBy, image } = formData;
-  const imgUrl = 'https://i.redd.it/ke53iac4gg331.jpg';
+  const imgUrl = 'https://th.bing.com/th/id/R.cee97614a67d2907c4b25a7d83c16bc4?rik=TvVe5E4eVbB9tA&pid=ImgRaw&r=0';
   const contract = await getContract(signer);
 
   try {
